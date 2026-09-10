@@ -1,0 +1,19 @@
+{
+  // O dia exFAT/NTFS khien macOS sinh file rac "._*". An chung di cho do roi mat
+  // va de Java language server khong co doc chung.
+  "files.exclude": {
+    "**/._*": true
+  },
+  "search.exclude": {
+    "**/._*": true,
+    "**/target": true
+  },
+  "files.watcherExclude": {
+    "**/target/**": true
+  },
+
+  // Tu dong cap nhat classpath moi khi pom.xml thay doi.
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.maven.enabled": true,
+  "java.compile.nullAnalysis.mode": "automatic"
+}

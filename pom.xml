@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>clean-and-hexagonal-architecture</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>clean-and-hexagonal-architecture</name>
+    <description>Cung mot nghiep vu Dat hang, cai dat theo hai kien truc de so sanh</description>
+
+    <!--
+        POM tong hop (aggregator). Hai module ben duoi la hai ung dung Spring Boot doc lap,
+        moi cai co parent rieng la spring-boot-starter-parent.
+        Nho file nay ma IDE nhan dien duoc ca hai module chi voi mot lan import.
+    -->
+    <modules>
+        <module>hexagonal-architecture</module>
+        <module>clean-architecture</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+</project>

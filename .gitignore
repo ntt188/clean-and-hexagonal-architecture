@@ -1,0 +1,21 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# macOS: o dia exFAT/NTFS sinh file AppleDouble cho moi file co extended attribute
+._*
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# IDE
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+bin/
+
+# Log
+*.log
