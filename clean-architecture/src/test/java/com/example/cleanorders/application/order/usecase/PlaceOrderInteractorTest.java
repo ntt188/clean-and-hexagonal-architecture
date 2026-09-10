@@ -11,6 +11,7 @@ import com.example.cleanorders.domain.order.entity.Customer;
 import com.example.cleanorders.domain.order.entity.CustomerId;
 import com.example.cleanorders.domain.order.entity.Money;
 import com.example.cleanorders.domain.order.entity.Order;
+import com.example.cleanorders.domain.order.entity.Product;
 import com.example.cleanorders.domain.order.entity.OrderId;
 import com.example.cleanorders.domain.order.exception.InvalidOrderException;
 import com.example.cleanorders.domain.order.service.OrderPricingService;
@@ -49,14 +50,14 @@ class PlaceOrderInteractorTest {
     }
 
     static class FakeInventoryGateway implements InventoryGateway {
-        private final Map<String, ProductInfo> catalog = new LinkedHashMap<>();
+        private final Map<String, Product> catalog = new LinkedHashMap<>();
         final List<String> reserved = new ArrayList<>();
         FakeInventoryGateway() {
-            catalog.put("P-01", new ProductInfo("P-01", "Ban phim co", Money.of("120.00"), 10));
-            catalog.put("P-02", new ProductInfo("P-02", "Chuot khong day", Money.of("45.50"), 3));
-            catalog.put("P-03", new ProductInfo("P-03", "Man hinh 27 inch", Money.of("320.00"), 0));
+            catalog.put("P-01", new Product("P-01", "Ban phim co", Money.of("120.00"), 10));
+            catalog.put("P-02", new Product("P-02", "Chuot khong day", Money.of("45.50"), 3));
+            catalog.put("P-03", new Product("P-03", "Man hinh 27 inch", Money.of("320.00"), 0));
         }
-        @Override public Optional<ProductInfo> findProduct(String productId) {
+        @Override public Optional<Product> findProduct(String productId) {
             return Optional.ofNullable(catalog.get(productId));
         }
         @Override public void reserve(String productId, int quantity) {

@@ -1,15 +1,17 @@
 package com.example.orders.application.order.port.out;
 
-import com.example.orders.domain.order.entity.Money;
+import com.example.orders.domain.order.entity.Product;
 
 import java.util.Optional;
 
-/** OUTBOUND PORT: lõi cần hỏi hệ thống kho (một service khác). */
+/**
+ * OUTBOUND PORT: lõi cần hỏi hệ thống kho (một service khác).
+ * Trả về entity domain {@code Product}, không tự định nghĩa kiểu dữ liệu riêng —
+ * nhất quán với {@code CustomerRepository} trả về {@code Customer}.
+ */
 public interface InventoryPort {
 
-    record ProductInfo(String productId, String name, Money unitPrice, int available) {}
-
-    Optional<ProductInfo> findProduct(String productId);
+    Optional<Product> findProduct(String productId);
 
     void reserve(String productId, int quantity);
 }

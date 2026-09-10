@@ -6,10 +6,8 @@ import com.example.cleanorders.adapters.inbound.web.presenter.PlaceOrderPresente
 import com.example.cleanorders.adapters.inbound.web.request.PlaceOrderRequest;
 import com.example.cleanorders.adapters.inbound.web.response.PlaceOrderResponse;
 import com.example.cleanorders.application.order.port.in.PlaceOrderInputBoundary;
-import com.example.cleanorders.domain.order.exception.DomainException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * CONTROLLER: dịch HTTP thành Request Model rồi gọi Input Boundary.
  * KHÁC HEXAGONAL: nó không nhận giá trị trả về từ use case, mà đọc View Model
  * do Presenter đã chuẩn bị sẵn. Cả mã HTTP cũng do Presenter quyết định.
+ * Việc dịch ngoại lệ domain thuộc về {@code advice/DomainExceptionHandler}.
  */
 @RestController
 @RequestMapping("/api/orders")
@@ -42,11 +41,5 @@ public class OrderController {
 
         OrderViewModel viewModel = presenter.viewModel();
         return ResponseEntity.status(viewModel.httpStatus()).body(mapper.toResponse(viewModel));
-    }
-
-    @ExceptionHandler(DomainException.class)
-    public ResponseEntity<PlaceOrderResponse> handleDomainException(DomainException e) {
-        return ResponseEntity.badRequest()
-                .body(new PlaceOrderResponse(null, "REJECTED", null, null, e.getMessage()));
     }
 }

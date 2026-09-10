@@ -3,6 +3,7 @@ package com.example.cleanorders.adapters.inbound.web;
 import com.example.cleanorders.adapters.outbound.persistence.springdata.SpringDataOrderJpaRepository;
 import com.example.cleanorders.application.order.port.out.InventoryGateway;
 import com.example.cleanorders.domain.order.entity.Money;
+import com.example.cleanorders.domain.order.entity.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ class PlaceOrderTransactionIntegrationTest {
     @DisplayName("Giu hang that bai -> don hang KHONG duoc luu lai (rollback toan bo)")
     void rollbackOrderWhenReserveFails() throws Exception {
         given(inventoryGateway.findProduct("P-01")).willReturn(Optional.of(
-                new InventoryGateway.ProductInfo("P-01", "Ban phim co", Money.of("120.00"), 10)));
+                new Product("P-01", "Ban phim co", Money.of("120.00"), 10)));
         willThrow(new IllegalStateException("He thong kho loi"))
                 .given(inventoryGateway).reserve(anyString(), anyInt());
 

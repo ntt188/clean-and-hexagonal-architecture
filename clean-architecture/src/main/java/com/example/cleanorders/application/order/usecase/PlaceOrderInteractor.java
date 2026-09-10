@@ -14,6 +14,7 @@ import com.example.cleanorders.domain.order.entity.Money;
 import com.example.cleanorders.domain.order.entity.Order;
 import com.example.cleanorders.domain.order.entity.OrderId;
 import com.example.cleanorders.domain.order.entity.OrderItem;
+import com.example.cleanorders.domain.order.entity.Product;
 import com.example.cleanorders.domain.order.exception.DomainException;
 import com.example.cleanorders.domain.order.service.OrderPricingService;
 
@@ -65,20 +66,20 @@ public class PlaceOrderInteractor implements PlaceOrderInputBoundary {
             }
             Customer customer = found.get();
 
-            // (2) Hỏi kho và dựng các dòng hàng
+            // (2) Hỏi kho; Product tự trả lời còn hàng không và tự dựng dòng hàng
             List<OrderItem> items = new ArrayList<>();
             for (PlaceOrderRequestModel.Item line : requestModel.items()) {
-                Optional<InventoryGateway.ProductInfo> product = inventoryGateway.findProduct(line.productId());
-                if (product.isEmpty()) {
+                Optional<Product> foundProduct = inventoryGateway.findProduct(line.productId());
+                if (foundProduct.isEmpty()) {
                     outputBoundary.presentFailure("San pham khong ton tai: " + line.productId());
                     return;
                 }
-                InventoryGateway.ProductInfo info = product.get();
-                if (info.available() < line.quantity()) {
-                    outputBoundary.presentFailure("Khong du hang: " + info.name());
+                Product product = foundProduct.get();
+                if (!product.hasStockFor(line.quantity())) {
+                    outputBoundary.presentFailure("Khong du hang: " + product.name());
                     return;
                 }
-                items.add(new OrderItem(info.productId(), info.name(), info.unitPrice(), line.quantity()));
+                items.add(product.orderLine(line.quantity()));
             }
 
             // (3) Entity tạo đơn

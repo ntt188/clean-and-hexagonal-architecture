@@ -113,7 +113,8 @@ sequenceDiagram
 hexagonal-architecture/src/main/java/com/example/orders/
 ├── OrdersApplication.java
 ├── domain/order/
-│   ├── entity/       Order, OrderItem, Customer, OrderId, CustomerId, Money, OrderStatus
+│   ├── entity/       Order, OrderItem, Customer, Product,
+│   │                 OrderId, CustomerId, Money, OrderStatus
 │   ├── service/      OrderPricingService            <- quy tắc không thuộc riêng entity nào
 │   └── exception/    DomainException, InvalidOrderException
 ├── application/order/
@@ -123,7 +124,7 @@ hexagonal-architecture/src/main/java/com/example/orders/
 │   ├── usecase/      PlaceOrderService              <- cài đặt inbound port
 │   └── dto/          PlaceOrderCommand, PlaceOrderResult
 ├── adapters/
-│   ├── inbound/web/  OrderController + request/ + response/ + mapper/
+│   ├── inbound/web/  OrderController + request/ + response/ + mapper/ + advice/
 │   └── outbound/
 │       ├── persistence/  JpaOrderRepositoryAdapter + springdata/ + entity/ + mapper/
 │       ├── customer/     InMemoryCustomerAdapter
@@ -238,6 +239,11 @@ Hexagonal gọn hơn, để adapter tự quyết định cách trình bày.
 - **Email hoãn tới sau commit.** `EmailNotificationAdapter` đăng ký `TransactionSynchronization`
   và chỉ gửi ở mốc `afterCommit`, để khách không nhận email về đơn đã bị rollback.
   Đây là việc của adapter, use case vẫn chỉ nói "hãy báo cho khách".
+- **Use case không làm mapping.** Cổng ra kho trả về entity domain `Product`; chính `Product`
+  trả lời `hasStockFor(qty)` và tự dựng `orderLine(qty)`. Trước đây use case phải tự kiểm tra
+  tồn kho rồi `new OrderItem(...)` từng trường một.
+- **Dịch ngoại lệ tập trung.** `adapters/inbound/web/advice/DomainExceptionHandler` là nơi duy
+  nhất biến ngoại lệ domain thành mã HTTP, nên `OrderController` chỉ còn một việc là định tuyến.
 - Thư mục dự án nằm trên ổ exFAT nên macOS sinh file rác `._*` phá vỡ component scan.
   `pom.xml` đã cấu hình `maven-antrun-plugin` tự xoá chúng sau mỗi lần biên dịch,
   và loại chúng khỏi `maven-compiler-plugin` / `maven-surefire-plugin`.

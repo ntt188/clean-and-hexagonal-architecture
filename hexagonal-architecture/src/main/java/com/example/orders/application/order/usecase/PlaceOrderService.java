@@ -13,6 +13,7 @@ import com.example.orders.domain.order.entity.Money;
 import com.example.orders.domain.order.entity.Order;
 import com.example.orders.domain.order.entity.OrderId;
 import com.example.orders.domain.order.entity.OrderItem;
+import com.example.orders.domain.order.entity.Product;
 import com.example.orders.domain.order.exception.DomainException;
 import com.example.orders.domain.order.service.OrderPricingService;
 
@@ -58,18 +59,18 @@ public class PlaceOrderService implements PlaceOrderUseCase {
             }
             Customer customer = found.get();
 
-            // (2) Hỏi kho và dựng các dòng hàng
+            // (2) Hỏi kho; Product tự trả lời còn hàng không và tự dựng dòng hàng
             List<OrderItem> items = new ArrayList<>();
             for (PlaceOrderCommand.Item line : command.items()) {
-                Optional<InventoryPort.ProductInfo> product = inventoryPort.findProduct(line.productId());
-                if (product.isEmpty()) {
+                Optional<Product> foundProduct = inventoryPort.findProduct(line.productId());
+                if (foundProduct.isEmpty()) {
                     return PlaceOrderResult.rejected("San pham khong ton tai: " + line.productId());
                 }
-                InventoryPort.ProductInfo info = product.get();
-                if (info.available() < line.quantity()) {
-                    return PlaceOrderResult.rejected("Khong du hang: " + info.name());
+                Product product = foundProduct.get();
+                if (!product.hasStockFor(line.quantity())) {
+                    return PlaceOrderResult.rejected("Khong du hang: " + product.name());
                 }
-                items.add(new OrderItem(info.productId(), info.name(), info.unitPrice(), line.quantity()));
+                items.add(product.orderLine(line.quantity()));
             }
 
             // (3) Domain tạo đơn
